@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-
 int main(int argc, const char * argv[])
 {
     if(argc > 1) {
@@ -29,6 +28,16 @@ int main(int argc, const char * argv[])
                 NSMutableArray *array = [NSMutableArray array]; // array buffer
                 NSRange currentRange;
                 NSString *currentLine;
+                // added for lego shop
+                bool go = NO;
+                int ulCount = 0;
+                // strings for parsing stuff
+                NSString *productResults = @"id=\"product-results\"";
+                NSString *ulB = @"<ul";
+                NSString *ulE = @"</ul>";
+                NSString *h4B = @"<h4>";
+                NSString *h4E = @"</h4>";
+                
                 while (paraEnd < length) {
                     [stringFromFileAtURL getParagraphStart:&paraStart end:&paraEnd
                                                contentsEnd:&contentsEnd forRange:NSMakeRange(paraEnd, 0)];
@@ -37,11 +46,23 @@ int main(int argc, const char * argv[])
                     currentLine = [stringFromFileAtURL substringWithRange:currentRange];
                     // trim spaces
                     currentLine = [currentLine stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                    // if there is no whitespace add to array
                     if([currentLine length] > 0) {
-                        // if there is no whitespace add to array
-                        [array addObject:currentLine];
-                        // write current line
-                        //NSLog(@"%@", currentLine);
+                        // check first if it is a product (id="product-results")
+                        if([currentLine rangeOfString:productResults].location!=NSNotFound) {go = YES;}
+                        
+                        if(go) {
+                            // adds a <ul> to stack
+                            if([currentLine rangeOfString:ulB].location!=NSNotFound) {ulCount++;}
+                            // removes a <ul> to stack
+                            if([currentLine rangeOfString:ulE].location!=NSNotFound) {ulCount--;}
+                            
+                            // add to the output buffer
+                            [array addObject:currentLine];
+                            
+                            // means top level <ul> for product has been parsed already
+                            if(ulCount == 0) {go = NO;}
+                        }
                     }
                 }
                 if([array count] > 0) {

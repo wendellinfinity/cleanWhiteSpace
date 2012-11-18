@@ -59,7 +59,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/wendell/Documents/Projects/shop.lego/exclusives.html"
+            argument = "/Users/wendell/Documents/Projects/shop.lego/all.html"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
